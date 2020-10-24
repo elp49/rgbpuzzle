@@ -1,4 +1,6 @@
 import random
+import util
+
 
 class Node:
 
@@ -38,55 +40,77 @@ class Agent:
         # Return list of N states visited.
         return visited
 
-    def _search(self, fringe, heuristic=None):
+    def _search(self, state, pop_i, heuristic=None):
         '''This function encapsulates the common base algorithm among Bread-
         First search, Depth-First search, and A* search.'''
+        closed = []
+        node = Node(state, None)
 
+        # Test if current node is solution state.
+        if node.state.is_goal():
+            return node
 
-    def bfs(self, state):
-        closed_nodes = []
-
-        # Store initial node in open node list.
-        open_nodes = [Node(state, None)]
-
-        # For each open node.
-        while len(open_nodes) > 0:
-            current_node = open_nodes[0]
-
-            # Test if current node is solution state.
-            if current_node.state.is_goal():
-                break
-
-            # Generate all possible next states from this node.
-            actions = current_node.state.actions()
+        fringe = [node]
+        while fringe:
+            # Remove node from fringe.
+            node = fringe.pop(pop_i)
 
             # For each possible action on this state.
-            for a in actions:
-                # Clone the current state.
-                clone_state = current_node.state.clone()
+            for action in node.state.actions():
+                # Clone the current state and execute this action on it.
+                clone = node.state.clone()
+                clone.execute(action)
 
-                # Execute this action on clone.
-                clone_state.execute(a)
+                # Test if state is new and has not already been found.
+                if self.is_new(clone, closed, fringe):
+                    # Append child node to fringe.
+                    child = Node(clone, node)
+                    fringe.append(child)
+                    
+                    # Display new state.
+                    self.print_path(clone)
 
-                #TODO: should it check here if this is also goal before pushing to back of open?
+                    # Test if clone is solution state.
+                    if clone.state.is_goal():
+                        return child
 
-                # Create child node and append to open node list.
-                child_node = Node(clone_state, current_node)
-                open_nodes.append(child_node)
+            # Append current node to closed list.
+            closed.append(node)
 
-            # Remove closed node from open node list and append to closed list.
-            closed = open_nodes.pop(0)
-            closed_nodes.append(closed)
+        # If no solution state was foundreturn None to indicate failure.
+        return None
 
-        return current_node
-    
+    def is_new(self, state, closed=[], fringe=[]):
+        for c in closed:
+            if state.__eq__(c.state):
+                return False
+        
+        for c in fringe:
+            if state.__eq__(c.state):
+                return False
+
+        return True
+
+    def print_path(self, node):
+        path = []
+        n = node
+
+        # Generate list of states in path.
+        while n is not None:
+            path.append(n.state)
+            n = n.parent
+            
+        # Print path starting at initial state.
+        for state in reversed(path):
+            util.pprint(state)
+
+        print(len(path))
+
+    def bfs(self, state):
+        return self._search(state, 0)
 
     def dfs(self, state):
-        return ''
-
-    
+        return self._search(state, -1)
 
     def a_star(self, state, heuristic):
-        return ''
-
-    
+        return self._search(state, 0, heuristic)
