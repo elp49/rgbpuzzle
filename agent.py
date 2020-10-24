@@ -9,8 +9,7 @@ class Node:
 
 class Agent:
 
-    @staticmethod
-    def random_walk(state, n):
+    def random_walk(self, state, n):
         '''Does a random walk through the state space.'''
         # Initialize node.
         node = Node(state, None)
@@ -39,8 +38,12 @@ class Agent:
         # Return list of N states visited.
         return visited
 
-    @staticmethod
-    def bfs(state):
+    def _search(self, fringe, heuristic=None):
+        '''This function encapsulates the common base algorithm among Bread-
+        First search, Depth-First search, and A* search.'''
+
+
+    def bfs(self, state):
         closed_nodes = []
 
         # Store initial node in open node list.
@@ -78,14 +81,12 @@ class Agent:
         return current_node
     
 
-    @staticmethod
-    def dfs(state):
+    def dfs(self, state):
         return ''
 
     
 
-    @staticmethod
-    def a_star(state, heuristic):
+    def a_star(self, state, heuristic):
         return ''
 
     
