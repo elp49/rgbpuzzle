@@ -48,6 +48,8 @@ class Agent:
 
         # Test if current node is solution state.
         if node.state.is_goal():
+            self.print_path(node)
+            print('1')
             return node
 
         fringe = [node]
@@ -68,16 +70,18 @@ class Agent:
                     fringe.append(child)
                     
                     # Display new state.
-                    self.print_path(clone)
+                    self.print_path(child)
 
                     # Test if clone is solution state.
-                    if clone.state.is_goal():
+                    if clone.is_goal():
+                        print(len(closed) + len(fringe))
                         return child
 
             # Append current node to closed list.
             closed.append(node)
 
         # If no solution state was foundreturn None to indicate failure.
+        print('Failure')
         return None
 
     def is_new(self, state, closed=[], fringe=[]):
@@ -101,10 +105,8 @@ class Agent:
             n = n.parent
             
         # Print path starting at initial state.
-        for state in reversed(path):
-            util.pprint(state)
-
-        print(len(path))
+        path.reverse()
+        util.pprint(path)
 
     def bfs(self, state):
         return self._search(state, 0)
