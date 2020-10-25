@@ -2,8 +2,20 @@ import rgb
 import agent
 import util
 
-def heuristic():
-    return 0
+def heuristic(state):
+    '''The evalutation function for A* search - '''
+    h = 0
+    for x in range(state.size):
+        for y in range(state.size):
+            c = state.get(x, y)
+            if c != rgb.Cell.EMPTY:
+                deltas = [(-1, 0), (+1, 0), (0, -1), (0, +1)]
+                for dx, dy in deltas:
+                    x2, y2 = x+dx, y+dy
+                    c2 = state.get(x2, y2)
+                    if c == c2:
+                        h += 1
+    return h
 
 if __name__ == '__main__':
     cmd = util.get_arg(1)
@@ -23,5 +35,4 @@ if __name__ == '__main__':
             my_agent.dfs(state)
 
         elif cmd == 'a_star':
-            heuristic = heuristic()
             my_agent.a_star(state, heuristic)
